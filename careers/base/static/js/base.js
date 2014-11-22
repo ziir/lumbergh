@@ -185,4 +185,51 @@ Mozilla.Test = (function(w, $) {
     });
 
 
+
+    /*
+    *  --Experiment--
+    *  Gradually reduce the header as the user scrolls by.
+    *  ---
+    *  Bug 983973 - Top header bar might become smaller while scrolling 
+    *  https://bugzilla.mozilla.org/show_bug.cgi?id=983973
+    */
+
+    function initReducedHeaderScrollSpy() {
+
+        var masthead = document.getElementsByClassName('masthead')[0];
+        var contain = document.getElementsByClassName('contain')[0];
+        var logo = document.getElementsByClassName('masthead-logo')[0];
+
+        var spanLength = 100;
+        var fullStop = false;
+
+        var reducedHeaderScrollSpy = function() {
+
+            var scrollTop = $(window).scrollTop();
+            var ratio = scrollTop/spanLength;
+
+            if (scrollTop <= spanLength) {
+                fullStop = false;
+                contain.style.height = masthead.style.minHeight = (100 - (40*ratio)) + 'px';
+                logo.style.paddingTop = (30 - (24*ratio)) + 'px';
+                logo.style.paddingBottom = (20 - (20*ratio)) + 'px';
+            } else if (!fullStop) {
+                fullStop = true;
+                contain.style.height = masthead.style.minHeight = '60px';
+                logo.style.paddingTop = '6px';
+                logo.style.paddingBottom = '0';
+            }
+        };
+
+        $(window).on('scroll', reducedHeaderScrollSpy);
+    };
+
+
+    $(function() {
+        if (!Mozilla.Test.isSmallScreen) {
+            initReducedHeaderScrollSpy();
+        }
+    });
+
+
 })(jQuery);
