@@ -210,14 +210,16 @@ Mozilla.Test = (function(w, $) {
 
             if (scrollTop <= spanLength) {
                 fullStop = false;
-                contain.style.height = masthead.style.minHeight = (100 - (40*ratio)) + 'px';
-                logo.style.paddingTop = (30 - (24*ratio)) + 'px';
+                contain.style.height = masthead.style.minHeight = (100 - (50*ratio)) + 'px';
+                logo.style.paddingTop = (30 - (12*ratio)) + 'px';
                 logo.style.paddingBottom = (20 - (20*ratio)) + 'px';
+                logo.style.fontSize = (3 - ratio)+'em';
             } else if (!fullStop) {
                 fullStop = true;
-                contain.style.height = masthead.style.minHeight = '60px';
-                logo.style.paddingTop = '6px';
+                contain.style.height = masthead.style.minHeight = '50px';
+                logo.style.paddingTop = '12px';
                 logo.style.paddingBottom = '0';
+                logo.style.fontSize = '2em';
             }
         };
 
