@@ -195,6 +195,13 @@ Mozilla.Test = (function(w, $) {
     */
 
     function initReducedHeaderScrollSpy() {
+        var ticking = false;
+        var initializedBefore = false;
+        var $window = $(window);
+
+        if (initializedBefore) { return; }
+
+        initializedBefore = true;
 
         var masthead = document.getElementsByClassName('masthead')[0];
         var contain = document.getElementsByClassName('contain')[0];
@@ -202,36 +209,78 @@ Mozilla.Test = (function(w, $) {
 
         var spanLength = 100;
         var fullStop = false;
+        var reducedBefore = false;
 
-        var reducedHeaderScrollSpy = function() {
+        function reducedHeaderScrollSpy() {
+            ticking = false;
+            if (isSmallScreen()) { return; }
 
-            var scrollTop = $(window).scrollTop();
+            var scrollTop = $window.scrollTop();
             var ratio = scrollTop/spanLength;
 
             if (scrollTop <= spanLength) {
                 fullStop = false;
-                contain.style.height = masthead.style.minHeight = (100 - (50*ratio)) + 'px';
-                logo.style.paddingTop = (30 - (12*ratio)) + 'px';
+                reducedBefore = true;
+
+                contain.style.maxHeight = (100 - (50*ratio)) + 'px';
+                masthead.style.minHeight = contain.style.maxHeight;
+
+                logo.style.paddingTop = (30 - (24*ratio)) + 'px';
                 logo.style.paddingBottom = (20 - (20*ratio)) + 'px';
-                logo.style.fontSize = (3 - ratio)+'em';
+                logo.style.fontSize = (2.3 - ratio)+'em';
             } else if (!fullStop) {
                 fullStop = true;
-                contain.style.height = masthead.style.minHeight = '50px';
-                logo.style.paddingTop = '12px';
+                reducedBefore = true;
+
+                contain.style.maxHeight = masthead.style.minHeight = '50px';
+
+                logo.style.paddingTop = '6px';
                 logo.style.paddingBottom = '0';
                 logo.style.fontSize = '2em';
             }
         };
 
-        $(window).on('scroll', reducedHeaderScrollSpy);
+        function isSmallScreen() {
+            return $window.width() <= 680;
+        }
+
+        function handleResize() {
+            ticking = false;
+            if (isSmallScreen()) {
+                if (reducedBefore) {
+                    contain.style.maxHeight = 'none';
+                    masthead.style.minHeight = '60px';
+                }
+            } else if (!initializedBefore) {
+                initReducedHeaderScrollSpy();
+            } else {
+                /* Big screen and scrollspy already initialized
+                * Just run reducedHeaderScrollSpy once
+                * To update masthead / container
+                * in accordance to current scroll position
+                */
+                reducedHeaderScrollSpy();
+            }
+        }
+
+        function requestTick(fn) {
+            if(!ticking) {
+                requestAnimationFrame(fn);
+            }
+            ticking = true;
+        }
+
+        $window
+            .on('scroll', function onScroll() {
+                requestTick(reducedHeaderScrollSpy)
+            })
+            .on('resize', function onResize() {
+                requestTick(handleResize);
+            });
     };
 
 
     $(function() {
-        if (!Mozilla.Test.isSmallScreen) {
-            initReducedHeaderScrollSpy();
-        }
+        initReducedHeaderScrollSpy();
     });
-
-
 })(jQuery);
