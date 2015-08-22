@@ -208,7 +208,7 @@ Mozilla.Test = (function(w, $) {
         var logo = document.getElementsByClassName('masthead-logo')[0];
 
         var spanLength = 100;
-        var fullStop = false;
+        var fullStop = true;
         var reducedBefore = false;
 
         function reducedHeaderScrollSpy() {
@@ -259,6 +259,7 @@ Mozilla.Test = (function(w, $) {
                 * To update masthead / container
                 * in accordance to current scroll position
                 */
+                fullStop = false;
                 reducedHeaderScrollSpy();
             }
         }
@@ -277,6 +278,8 @@ Mozilla.Test = (function(w, $) {
             .on('resize', function onResize() {
                 requestTick(handleResize);
             });
+
+        requestTick(reducedHeaderScrollSpy);
     };
 
 
