@@ -203,13 +203,9 @@ Mozilla.Test = (function(w, $) {
 
         initializedBefore = true;
 
-        var masthead = document.getElementsByClassName('masthead')[0];
-        var contain = document.getElementsByClassName('contain')[0];
-        var logo = document.getElementsByClassName('masthead-logo')[0];
+        var $logo = $('.masthead-logo');
 
         var spanLength = 100;
-        var fullStop = true;
-        var reducedBefore = false;
 
         function reducedHeaderScrollSpy() {
             ticking = false;
@@ -218,25 +214,12 @@ Mozilla.Test = (function(w, $) {
             var scrollTop = $window.scrollTop();
             var ratio = scrollTop/spanLength;
 
-            if (scrollTop <= spanLength) {
-                fullStop = false;
-                reducedBefore = true;
-
-                contain.style.maxHeight = (100 - (50*ratio)) + 'px';
-                masthead.style.minHeight = contain.style.maxHeight;
-
-                logo.style.paddingTop = (30 - (24*ratio)) + 'px';
-                logo.style.paddingBottom = (20 - (20*ratio)) + 'px';
-                logo.style.fontSize = (2.3 - ratio)+'em';
-            } else if (!fullStop) {
-                fullStop = true;
-                reducedBefore = true;
-
-                contain.style.maxHeight = masthead.style.minHeight = '50px';
-
-                logo.style.paddingTop = '6px';
-                logo.style.paddingBottom = '0';
-                logo.style.fontSize = '2em';
+            if (ratio < 1 && !$logo.hasClass('expanded')) {
+                $logo.addClass('expanded');
+            } else if (ratio < 1) {
+                $logo[0].style.paddingTop = 28 - (18*ratio) + 'px';
+            } else if (ratio > 1 && ($logo.hasClass('expanded') || $logo.attr('style'))) {
+                $logo.removeAttr('style').removeClass('expanded');
             }
         };
 
@@ -246,12 +229,7 @@ Mozilla.Test = (function(w, $) {
 
         function handleResize() {
             ticking = false;
-            if (isSmallScreen()) {
-                if (reducedBefore) {
-                    contain.style.maxHeight = 'none';
-                    masthead.style.minHeight = '60px';
-                }
-            } else if (!initializedBefore) {
+            if (!initializedBefore) {
                 initReducedHeaderScrollSpy();
             } else {
                 /* Big screen and scrollspy already initialized
@@ -259,7 +237,6 @@ Mozilla.Test = (function(w, $) {
                 * To update masthead / container
                 * in accordance to current scroll position
                 */
-                fullStop = false;
                 reducedHeaderScrollSpy();
             }
         }

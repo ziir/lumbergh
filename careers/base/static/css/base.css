@@ -228,13 +228,7 @@ figure {
 }
 
 .masthead-logo {
-    padding: 30px 0 20px;
     margin: 0;
-    font-size: 2.3em;
-
-    -webkit-transition: font-size 0.1s;
-       -moz-transition: font-size 0.1s;
-            transition: font-size 0.1s;
 }
 
 .masthead-logo a:not(:hover) {
@@ -282,7 +276,8 @@ figure {
         left: 0;
         z-index: 100;
         width: 100%;
-        min-height: 100px;
+        max-height: 100px;
+        min-height: 60px;
         background: #f5f1e8 url(/static/img/bg-sand.png) repeat;
         background: url(/static/img/bg-gradient-sand.png) repeat-x 0 0,
                     url(/static/img/bg-sand.png) repeat 0 0, #f5f1e8;
@@ -293,7 +288,8 @@ figure {
     }
 
     .js-enabled .masthead .contain {
-       height: 100px;
+       max-height: 100px;
+       height: auto;
        overflow: hidden;
     }
 
@@ -305,6 +301,11 @@ figure {
 @media (min-width: 940px) {
    .masthead-logo {
         display: block;
+        padding-top: 10px;
+    }
+
+    .masthead-logo.expanded {
+        padding-top: 28px;
     }
 }
 
